@@ -1,0 +1,29 @@
+version: '3'
+services:
+  database:
+    build: 
+      context: .
+      dockerfile: database.Dockerfile
+    env_file:
+      - whole.env # PG configure
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./mlflow_backend:/var/lib/postgresql/data
+
+  jupyter:
+    depends_on:
+      - database
+    build: 
+      context: .
+      dockerfile: jupyter.Dockerfile
+    env_file:
+      - whole.env # mlflow configure
+    ports:
+      - "${MLFLOW_HOST_PORT}:${MLFLOW_PORT}"
+      - "${JUPYTER_HOST_PORT}:${JUPYTER_PORT}"
+    volumes:
+      - "./mlflow_artifact_root:${DEFAULT_ARTIFACT_ROOT}"
+
+
+# mlflow server --default-artifact-root /home/jovyan/mlflow_artifact_root --backend-store-uri postgresql://unicorn_user:magical_password@database/rainbow_database --host 0.0.0.0 --port 5000
