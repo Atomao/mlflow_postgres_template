@@ -23,7 +23,14 @@ services:
       - "5000:5000"
       - "6008:8888"
     volumes:
-      - "./mlflow_artifact_root:/home/jovyan/mlflow_artifact_root"
+      - "./mlflow_artifact_root:/code/mlflow_artifact_root"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
 
 
 # mlflow server --default-artifact-root /home/jovyan/mlflow_artifact_root --backend-store-uri postgresql://unicorn_user:magical_password@database/rainbow_database --host 0.0.0.0 --port 5000
